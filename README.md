@@ -1,61 +1,110 @@
-# CodeIgniter 4 Framework
+## Setup Lengkap dari Clone sampai Bisa Dijalankan
 
-## What is CodeIgniter?
+Berikut panduan lengkap untuk menjalankan project ini di lingkungan lokal.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+### 1. Clone repository
 
-This repository holds the distributable version of the framework.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+```bash
+git clone <url-repository>
+cd toko-api
+```
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+### 2. Pastikan kebutuhan sistem terpenuhi
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+Pastikan server lokal Anda sudah memiliki:
 
-## Important Change with index.php
+- PHP 8.2+
+- MySQL/MariaDB
+- Apache atau Nginx
+- Composer
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+Cek ekstensi PHP yang diperlukan:
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+- intl
+- mbstring
+- json
+- mysqlnd
+- curl
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### 3. Install dependency
 
-## Repository Management
+Jalankan perintah berikut di direktori project:
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+```bash
+composer install
+```
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+### 4. Buat database
 
-## Contributing
+Buat database MySQL/MariaDB dengan nama:
 
-We welcome contributions from the community.
+```sql
+CREATE DATABASE toko_api;
+```
 
-Please read the [*Contributing to CodeIgniter*](https://github.com/codeigniter4/CodeIgniter4/blob/develop/CONTRIBUTING.md) section in the development repository.
+### 5. Konfigurasi koneksi database
 
-## Server Requirements
+Buka file [app/Config/Database.php](app/Config/Database.php) lalu sesuaikan konfigurasi berikut sesuai environment Anda:
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+```php
+'hostname' => 'localhost',
+'username' => 'root',
+'password' => '',
+'database' => 'toko_api',
+```
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+### 6. Jalankan migrasi database
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+Project ini sudah menggunakan migrasi CodeIgniter 4 untuk membuat tabel database secara otomatis.
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+```bash
+php spark migrate
+```
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+### 7. Jalankan seeder
+
+Untuk mengisi data awal seperti data member, token, dan produk:
+
+```bash
+php spark db:seed DatabaseSeeder
+```
+
+### 8. Jalankan aplikasi
+
+Jika Anda menggunakan XAMPP, arahkan browser ke:
+
+```text
+http://localhost/toko-api/public/
+```
+
+Atau jalankan server internal PHP:
+
+```bash
+php spark serve
+```
+
+Lalu buka:
+
+```text
+http://localhost:8080
+```
+
+### File yang terlibat
+
+- Migrasi: [app/Database/Migrations/2026-07-02-120000_CreateTokoApiTables.php](app/Database/Migrations/2026-07-02-120000_CreateTokoApiTables.php)
+- Seeder: [app/Database/Seeds/DatabaseSeeder.php](app/Database/Seeds/DatabaseSeeder.php)
+
+### Jika ingin mengulang dari awal
+
+Untuk menghapus tabel yang dibuat oleh migrasi:
+
+```bash
+php spark migrate:rollback
+```
+
+Kemudian jalankan ulang:
+
+```bash
+php spark migrate
+php spark db:seed DatabaseSeeder
+```
